@@ -1,9 +1,8 @@
 const canvas = document.getElementById("canva");
 const ctx = canvas.getContext("2d");
-var t = document.getElementById("canva");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
-const numberofparticle = 85;
+var numberofparticle = 5;
 //numberofparticle, size 입력받아서 구현하기
 let particlearray = [];
 let titleElement = document.getElementById("doodle");
@@ -24,20 +23,21 @@ class Particle {
   constructor(x, y) {
     this.x = x;
     this.y = y;
-    this.size = Math.random() * 20 + 0.5;
-    this.weight = 2;
+    this.size = Math.random() * 0.8 + 0.3;
+    this.weight = 0.5;
     this.directionX = 0;
     this.color = "#" + ((Math.random() * 0xffffff) << 0).toString(16);
   }
   update() {
     this.x += this.directionX;
-    this.weight += 0.03;
+    this.weight += 0.005;
     this.y += this.weight;
     if (this.y > canvas.height || this.x > canvas.width || this.x < 0) {
       this.y = 0;
-      this.weight = 4;
+      this.weight = 0.5;
       this.x = Math.random() * canvas.width;
       this.directionX = 0;
+      numberofparticle++;
     }
     if (
       this.x <= title.x + title.width &&
@@ -50,14 +50,14 @@ class Particle {
       this.weight *= -0.2;
     }
     if (
-      this.x <= xPos + 20 &&
-      this.x + this.size >= xPos - 20 &&
-      this.y < yPos + 20 &&
-      this.y + this.size > yPos - 20
+      this.x <= xPos + 40 &&
+      this.x + this.size >= xPos - 40 &&
+      this.y < yPos + 40 &&
+      this.y + this.size > yPos - 40
     ) {
-      this.weight *= -0.4;
-      this.y -= 18;
-      this.directionX = -(xPos - this.x) / 4;
+      this.weight *= -(yPos - this.y) % 0.5;
+      this.y -= (yPos - this.y) / 4;
+      this.directionX = -(xPos - this.x) / 30;
     }
   }
   draw() {
@@ -65,7 +65,7 @@ class Particle {
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
     ctx.closePath();
-    ctx.stroke();
+    ctx.fill();
   }
 }
 function numbering() {
@@ -78,7 +78,10 @@ function numbering() {
 numbering();
 
 function animate() {
-  ctx.fillStyle = "rgba(255, 255, 255, 10)";
+  numbering();
+  document.getElementById("doodle").innerHTML =
+    "particles: " + numberofparticle;
+  ctx.fillStyle = "rgba(255, 255, 255, 0.1)";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   for (let i = 0; i < numberofparticle; i++) {
